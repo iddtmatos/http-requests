@@ -1,0 +1,15 @@
+###
+POST https://ts-gateway.qa.intranet.pags/api/v3/transactions/count
+user-agent: store-promotion
+x-api-key: 502d36d75aac4d2f99cfa6529ee46f2e
+Content-Type: application/json
+
+{
+  "source": "",
+  "initialCreationDate": "",
+  "finalCreationDate": "",
+  "customerCod": "",
+  "accountingEntryType": "",
+  "channels": [""],
+  "mainPaymentMethodIds": [""]
+}

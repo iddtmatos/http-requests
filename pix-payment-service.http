@@ -1,0 +1,14 @@
+@tx_id=
+@value=
+
+### Efetuar pagamento de pix (Status: paid)
+### As infos são obtidas em qrcode-service.http (Obter informações do QR Code)
+POST https://pix-payment-service.digital-payments.qa.aws.intranet.pagseguro.uol/admin/confirmPixCaptured
+Content-Type: application/json
+accept: */*
+
+{
+  "e2e_id": "{{tx_id}}",
+  "status": "charge_confirmed",
+  "amount": "{{value}}}"
+}

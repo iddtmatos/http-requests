@@ -1,0 +1,24 @@
+@host=https://api.opt-in.qa.intranet.pags
+@customerId=CUSTOMER:7836658263E443FDB2D9C0516C54973E
+
+### Registro de opt-ins do usuário
+POST {{host}}/opt-in
+Content-Type: application/json
+Origin: servicedesk.forcadevendas.app
+
+{
+  "customerId": "{{customerId}}",
+  "productName": "POUPAR_AUTOMATICO",
+  "originChannel": "LOJA",
+  "createdAt": 1683909436000,
+  "status": "ACCEPTED",
+  "metadata": "{\"percentage\":\"23\",\"typeApplication\":\"vendas\"}"
+}
+
+### Consulta de produtos que deveriam ser mostrados para o usuário
+GET {{host}}/customers/{{customerId}}/products
+?channel=LOJA
+&status=CUSTOMER_DECISION_PENDING
+&status=DECLINED
+&status=ACCEPTED
+&status=NOT_INTENDED

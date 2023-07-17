@@ -1,0 +1,10 @@
+@qrCode=QRCO_3CDD0321-2D0E-4892-9E9A-DED0ABFAB69A
+@customerId=CUSTOMER:7836658263E443FDB2D9C0516C54973E
+@userPagSeguroAccountId=
+
+### Obter informações do QR Code
+### O código é a parte final da url do png do qrcode. (Usar F12 - Ferramentas do Desenvolvedor no Browser para capturar a url)
+GET https://qrcode-service.digital-payments.qa.aws.intranet.pagseguro.uol/qrcode/{{qrCode}}
+Content-Type: application/json
+X-User-Customer-Id: {{customerId}}
+X-User-Pagseguro-Account-Id: {{userPagSeguroAccountId}}

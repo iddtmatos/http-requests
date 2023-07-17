@@ -1,0 +1,7 @@
+@host=https://store-promotion-api.qa.intranet.pags
+
+###
+GET {{host}}/v1/promotions/siteoferta2pix0?hashs=f0c1821325466d81bd957a795ae326b8
+
+###
+GET {{host}}/v1/promotions/siteoferta2pix0/hash
