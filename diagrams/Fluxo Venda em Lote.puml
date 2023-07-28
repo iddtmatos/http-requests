@@ -1,0 +1,77 @@
+@startuml
+autonumber
+
+actor Customer
+activate Customer
+
+    activate "LP Vendas em Lote"
+        Customer -> "LP Vendas em Lote": Cliente acessa url da LP
+
+        activate "ps-partner"
+            "LP Vendas em Lote" -> "ps-partner": LP verifica elegibilidade
+            "ps-partner" --> "LP Vendas em Lote"
+        deactivate "ps-partner"
+
+        "LP Vendas em Lote" -> "Carrinho": Redirect Carrinho
+    deactivate "LP Vendas em Lote"
+
+    activate "Carrinho"
+        "Carrinho" -> "ps-acquisition-gateway": Repassar\ntodos os\nparâmetros\nque\nchegarem\nna URL do\ncarrinho
+        "ps-acquisition-gateway" -> "store-conclusion-bff": <b>GET</b> /api/products?many_query_parameters
+
+        activate "store-conclusion-bff"
+            alt Processamento Paralelo
+                activate "Carrinho (node)"
+                    "store-conclusion-bff" -> "Carrinho (node)": <b>GET</b> /api/products
+                    "Carrinho (node)" --> "store-conclusion-bff": returns <b>200 (OK)</b>\n{\n    "data": [{ products }]\n}
+                deactivate "Carrinho (node)"
+
+                autonumber 7
+                activate "store-checkout"
+                    "store-conclusion-bff" -> "store-checkout": <b>GET</b> /v1/restrictions?channel={cf?'LT'}&ruleName={cf}_default
+                    "store-checkout" --> "store-conclusion-bff": returns <b>200 (OK)</b>\n{\n    "maxReadersAllowed": 2\n}
+                deactivate "store-checkout"
+
+                "store-conclusion-bff" --> "ps-acquisition-gateway": returns <b>200 (OK)</b>\n{\n    "data": [{ products }]\n    "maxReadersAllowed": 2\n}
+            end
+
+            "ps-acquisition-gateway" --> "Carrinho"
+        deactivate "store-conclusion-bff"
+
+        "Carrinho" --> Customer: Renderiza carrinho para Cliente
+    deactivate "Carrinho"
+
+    |||
+
+    autonumber
+    activate "shop-web"
+        Customer -> "shop-web":  Apertou botão continuar
+
+        activate "store-conclusion-bff"
+            "shop-web" -> "store-conclusion-bff": chama endpoint da trava por doc
+
+            activate "store-checkout"
+                "store-conclusion-bff" -> "store-checkout": <b>GET</b> /v1/purchases/check-readers-limit?customers=[]&readers-on-cart=2\n// x-app-origin: //store-conclusion-bff\n //x-rule-name:// ?????
+                "store-checkout" --> "store-conclusion-bff": returns <b>200 (OK)</b>\n{\n    "maxReadersCustomerIsAllowToBuy": 2\n    "readersBought": 5\n    "isPurchaseValid": true\n}
+            deactivate "store-checkout"
+            note over "store-checkout","store-conclusion-bff"
+            * O que vai acontecer quando passar valores inválidos?
+            * Como vai se comportar quando alguma API estiver fora?
+            = valor default = 2?
+            end note
+
+            "store-conclusion-bff" --> "shop-web"
+        deactivate "store-conclusion-bff"
+
+        activate "store-checkout"
+            "shop-web" -> "store-checkout": Inicia checkout
+            "store-checkout" --> "shop-web"
+        deactivate "store-checkout"
+
+        "shop-web" -> "Tela de Checkout": Redirect
+        "Tela de Checkout" --> Customer
+    deactivate "shop-web"
+
+    Customer -> "Tela de Conclusão": Avançar
+deactivate Customer
+@enduml

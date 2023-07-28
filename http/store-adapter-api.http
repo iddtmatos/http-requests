@@ -1,0 +1,22 @@
+@host=https://store-adapter-api.qa.intranet.pags
+
+### Responsável por solicitar a criação de chave pix.
+POST {{host}}/pix
+Content-Type: application/json
+
+{
+  "codCustomer": "CUSTOMER:7836658263E443FDB2D9C0516C54973E",
+  "idtSafepayUser": "133142280",
+  "channel": "LOJA"
+}
+
+###
+POST {{host}}/basic-bundle/CUSTOMER:7836658263E443FDB2D9C0516C54973E
+Content-Type: application/json
+
+{
+  "investment": {
+    "accepted": true,
+    "value": 10
+  }
+}

@@ -1,9 +1,0 @@
-### Poupa Mais - Vendas
-POST https://store-adapter-api.qa.intranet.pags/investments
-Content-Type: application/json
-
-{
-  "customerId": "CUSTOMER:7836658263E443FDB2D9C0516C54973E",
-  "accepted": true,
-  "value": 10
-}

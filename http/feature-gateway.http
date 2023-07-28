@@ -1,0 +1,10 @@
+GET https://feature-gateway.qa.api.pagseguro.intranet/feature-gateway-api/feature/store-bff.basic-bundle.data
+?instance=qa
+&owner=store-bff
+&data=aaa
+
+###
+GET https://feature-gateway.qa.api.pagseguro.intranet/feature-gateway-api/feature/store-promotion.special.promotion
+?instance=qa
+&owner=store-promotion
+&data=siteoferta2vistapix00

@@ -1,10 +1,10 @@
 @host=https://api.opt-in.qa.intranet.pags
 @customerId=CUSTOMER:7836658263E443FDB2D9C0516C54973E
 
-### Registro de opt-ins do usuário
+### Registro de opt-ins do usuário - Poupar Mais Automático
 POST {{host}}/opt-in
 Content-Type: application/json
-Origin: servicedesk.forcadevendas.app
+Origin: store.order.store-adapter-api
 
 {
   "customerId": "{{customerId}}",
@@ -12,7 +12,21 @@ Origin: servicedesk.forcadevendas.app
   "originChannel": "LOJA",
   "createdAt": 1683909436000,
   "status": "ACCEPTED",
-  "metadata": "{\"percentage\":\"23\",\"typeApplication\":\"vendas\"}"
+  "metadata": "{\"percentage\":\"23\",\"typeApplication\":\"PAYMENT_RELEASE\"}"
+}
+
+### Registro de opt-ins do usuário - Cartão de Crédito
+POST {{host}}/opt-in
+Content-Type: application/json
+Origin: store.order.store-adapter-api
+
+{
+  "customerId": "{{customerId}}",
+  "productName": "CARTAO_DE_CREDITO",
+  "originChannel": "LOJA",
+  "createdAt": 1683909436000,
+  "status": "ACCEPTED",
+  "metadata": "{\"paymentDay\":15}"
 }
 
 ### Consulta de produtos que deveriam ser mostrados para o usuário

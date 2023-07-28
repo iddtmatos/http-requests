@@ -1,7 +1,0 @@
-@codCheckout=T3ST3L0C4LQ4PR0DC4LQ4
-@orderId=8b3886da-8e1f-4681-bb0f-d8cd0a5be883
-
-###
-GET https://store-checkout-api.qa.pagseguro.intranet/v2/checkout/consolidated/{{codCheckout}}?orderId={{orderId}}
-x-app-origin: store-conclusion-bff
-x-customer-id: CUSTOMER:T3ST3L0C4LQ4PR0DC4LQ4

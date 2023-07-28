@@ -1,5 +1,5 @@
-@tx_id=
-@value=
+@tx_id=20230718135358649839584997877360
+@value=22680
 
 ### Efetuar pagamento de pix (Status: paid)
 ### As infos são obtidas em qrcode-service.http (Obter informações do QR Code)

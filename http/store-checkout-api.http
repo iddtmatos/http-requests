@@ -1,0 +1,7 @@
+@codCheckout=8cb52d7e-2f59-4f40-bbd0-de57638082f0
+@orderId=ORDE_583F8B66-3CCC-4FD8-AC37-8EC7C503DFEB
+
+###
+GET https://store-checkout-api.qa.pagseguro.intranet/v2/checkout/consolidated/{{codCheckout}}?orderId={{orderId}}
+x-app-origin: store-conclusion-bff
+x-customer-id: CUSTOMER:36D998CAD3004073903CA347E55FE13E
