@@ -14,7 +14,7 @@ activate "Página de Conclusão"
         |||
         "Página de Conclusão"->"store-conclusion-bff": <b>POST</b> /v1/basic-bundle\n// x-ibanking-session-owner-customer-id: //COD:12345\n //x-ibanking-session-safepay-user-id:// 12345\n //x-ibanking-session-owner-email:// test@mail.com\n{\n  "investment": {"accepted": false, "value": null},\n  "creditCard": {"accepted": false, "dueDate": null}\n}
     end
-    "store-conclusion-bff"->"store-adapter-api": <b>POST</b> /basic-bundle/{customerId}\n{\n  "investment": {"accepted": false, "value": null},\n  "creditCard": {"accepted": false, "dueDate": null}\n}
+    "store-conclusion-bff"->"store-adapter-api": <b>POST</b> /basic-bundle/COD:12345\n{\n  "investment": {"accepted": false, "value": null},\n  "creditCard": {"accepted": false, "dueDate": null}\n}
     activate "store-adapter-api"
         group processamento paralelo
             group retentativa [até 3 vezes, a cada 1 seg]

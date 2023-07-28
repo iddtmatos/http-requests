@@ -1,0 +1,36 @@
+@startuml
+autonumber
+Customer->"Página de Conclusão": Usuário faz opt-in
+activate "Página de Conclusão"
+    "Página de Conclusão"->"store-conclusion-bff": <b>POST</b> /v1/basic-bundle\n// x-ibanking-session-owner-customer-id: //COD:12345\n //x-ibanking-session-safepay-user-id:// 12345\n //x-ibanking-session-owner-email:// test@mail.com\n{\n  "investment": {"accepted": true, "value": 10},\n  "creditCard": {"accepted": true, "dueDate": 1}\n}
+    activate "store-conclusion-bff"
+        "store-conclusion-bff"->"store-adapter-api": <b>POST</b> /basic-bundle/COD:12345\n{\n  "investment": {"accepted": true, "value": 10},\n  "creditCard": {"accepted": true, "dueDate": 1}\n}
+        group Campos Válidos? [Validações:\naccepted is required\n10<=investmentValue<=100\ndueDate in 1,5,10,15,20,25]
+            "store-adapter-api"-->"store-conclusion-bff": <i>returns</i> <b>204 NO_CONTENT</b>
+        else
+            "store-adapter-api"-->"store-conclusion-bff": <i>returns</i> <b>400 BAD_REQUEST</b>\n { "timestamp": 123123, "error": "Mensagem de erro." }
+        end
+    activate "store-adapter-api"
+        group processamento paralelo
+            group retentativa [até 3 vezes, a cada 1 seg]
+                "store-adapter-api"->"api-opt-in": <b>POST</b> /opt-in \n//Origin:// store.order.store-adapter-api\n{\n  "customerId": "COD:12345",\n  "productName": "POUPAR_AUTOMATICO",\n  "originChannel": "LOJA",\n  "createdAt": 1683909436000,\n  "status": "ACCEPTED",\n  "metadata": {"\"typeApplication\":\"PAYMENT_RELEASE\",\"percentage\":\"10\"}"\n}
+                group SUCESSO?
+                    "store-adapter-api"->"New Relic": LOJA::InvestmentsIntegrationEvent::selectInvestmentsWithSuccess
+                else
+                    "store-adapter-api"->"New Relic": LOJA::InvestmentsIntegrationEvent::selectInvestmentsFallbackMethod
+                end
+            end
+            group retentativa [até 3 vezes, a cada 1 seg]
+                "store-adapter-api"->"api-opt-in": <b>POST</b> /opt-in \n//Origin:// store.order.store-adapter-api\n{\n  "customerId": "COD:12345",\n  "productName": "CARTAO_DE_CREDITO",\n  "originChannel": "LOJA",\n  "createdAt": 1683909436000,\n  "status": "ACCEPTED",\n  "metadata": "{\"paymentDay\":\"1\"}"\n}
+                group SUCESSO?
+                    "store-adapter-api"->"New Relic": LOJA::CreditCardIntegrationEvent::selectCreditCardWithSuccess
+                else
+                    "store-adapter-api"->"New Relic": LOJA::CreditCardIntegrationEvent::selectCreditCardFallbackMethod
+                end
+            end
+        end
+    deactivate "store-adapter-api"
+    "store-conclusion-bff"->"Tópico Kafka\ncmd.dsr.investments.product.automatic.application.optin": <b>Key:</b> COD:12345\n<b>Message:</b>\n   customerId: COD:12345,\n   safepayUserId: 12345,\n   typeApplication: PAYMENT_RELEASE,\n   value:10,\n   channel: LOJA,\n   user:test@mail.com,\n   status: true\n   recurrenceType: null
+    deactivate "store-conclusion-bff"
+deactivate "Página de Conclusão"
+@enduml
