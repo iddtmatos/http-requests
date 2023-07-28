@@ -1,5 +1,7 @@
 # http-requests
-Exemplos de Requests em APIs
+Exemplos de Requests em APIs e Diagramas no PlantUML
 
 ### Como usar
-> Instalar a extensão REST CLIENT(https://marketplace.visualstudio.com/items?itemName=humao.rest-client) no Visual Studio
+Instalar as extensões no Visual Studio:
+- REST CLIENT (https://marketplace.visualstudio.com/items?itemName=humao.rest-client)
+- PlantUML (https://marketplace.visualstudio.com/items?itemName=jebbs.plantuml)
