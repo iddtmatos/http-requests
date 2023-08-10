@@ -1,4 +1,5 @@
 @startuml
+actor Customer
 autonumber
 Customer->"Página de Conclusão": Usuário faz opt-in
 activate "Página de Conclusão"
