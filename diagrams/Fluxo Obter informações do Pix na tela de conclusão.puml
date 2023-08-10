@@ -1,0 +1,85 @@
+@startuml
+autonumber
+actor Customer
+
+Customer -> "Tela de Checkout"
+"Tela de Checkout" -> "Tela de Conclusão": Escolhe meio de\npagamento PIX
+activate "ps-acquisition-gateway"
+
+    "Tela de Conclusão" -> "ps-acquisition-gateway"
+    activate "store-conclusion-bff"
+        "ps-acquisition-gateway" -> "store-conclusion-bff": **GET** /v2/conclusions\n?order_id=ORDE_A1231231VALID23231244556
+        rnote right "ps-acquisition-gateway"
+        //AUIB:// ABCDEF1234
+        //AUPS:// ABCDEF6789
+        //x-cod-checkout:// C383F7E2FAFA92ECC4976FA128598765
+        end note
+
+        activate "store-checkout-api"
+            "store-conclusion-bff" -> "store-checkout-api": **GET** /v2/checkout/consolidated/C383F7E2FAFA92ECC4976FA128598765\n?orderId=
+            rnote right "store-conclusion-bff"
+            //x-customer-id://
+            //x-app-origin:// store-conclusion-bff
+            end note
+            "store-checkout-api" --> "store-conclusion-bff": returns **OK (200)**
+            rnote right "store-conclusion-bff"
+            {
+                "transactionCode": "",
+                **"codCheckout": """**
+                **"orderId": """**
+                "paymentStatus": "",
+                **"paymentType": null,**
+                "customer": {
+                    "name": "",
+                    "email": ""
+                },
+                ...
+                "paymentData": {
+                    **"qrCodes": [**
+                    **    "id": "QRCO_071FDDF6-CDD4-41CC-ABCA-8578659E1D9D",**
+                    **    "expiration_date": "2023-08-04T23:59:59.000-03:00",**
+                    **    "text": "00020101021226860014br.gov.bcb..."**
+                    **    "links": [**
+                    **        {**
+                    **            "href": "https://internal.qa.ap...  8659E1D9D/png",**
+                    **        }**
+                    **    ]**
+                    **]**
+                }
+            }
+            end note
+        deactivate "store-checkout-api"
+        "store-conclusion-bff" --> "ps-acquisition-gateway": //returns// **OK (200)**
+        rnote right "ps-acquisition-gateway"
+        {
+            "transactionCode": ""
+            "status": {
+                "value": "",
+                "description": "",
+                "debtorName": "",
+                "debtorEmail": "",
+                "paymentType": "",
+                "creditCard": null,
+                "booklet": null,
+                **"pix" : {**
+                **    "id": "QRCO_87138D6A-2D98-4D51-944D-F25548DF01AA",**
+                **    "time_to_expiration": 123456789,**
+                **    "status": "PAID"**
+                **    "qrcode": "https://sandbox.api.pagseguro...1-944D-F25548DF01AA/png",**
+                **    "text": "00020101021226850014br.gov..."**
+                **},**
+                "products": [{ ... }],
+                "price": {
+                    "price": "",
+                    "totalWithDiscount": "",
+                    "extraAmount": ""
+                }
+            }
+        }
+        end note
+    deactivate "store-conclusion-bff"
+
+    "ps-acquisition-gateway" --> "Tela de Conclusão"
+
+deactivate "ps-acquisition-gateway"
+@enduml
