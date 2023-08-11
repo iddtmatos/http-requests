@@ -4,12 +4,12 @@ actor Customer
 
 Customer -> "Tela de Checkout"
 "Tela de Checkout" -> "Tela de Conclusão": Escolhe meio de\npagamento PIX
-activate "ps-acquisition-gateway"
+activate "carrinho-nodes"
 
-    "Tela de Conclusão" -> "ps-acquisition-gateway"
+    "Tela de Conclusão" -> "carrinho-nodes"
     activate "store-conclusion-bff"
-        "ps-acquisition-gateway" -> "store-conclusion-bff": **GET** /v2/conclusions\n?order_id=ORDE_A1231231VALID23231244556
-        rnote right "ps-acquisition-gateway"
+        "carrinho-nodes" -> "store-conclusion-bff": **GET** /v2/conclusions\n?order_id=ORDE_A1231231VALID23231244556
+        rnote right "carrinho-nodes"
         //AUIB:// ABCDEF1234
         //AUPS:// ABCDEF6789
         //x-cod-checkout:// C383F7E2FAFA92ECC4976FA128598765
@@ -49,8 +49,8 @@ activate "ps-acquisition-gateway"
             }
             end note
         deactivate "store-checkout-api"
-        "store-conclusion-bff" --> "ps-acquisition-gateway": //returns// **OK (200)**
-        rnote right "ps-acquisition-gateway"
+        "store-conclusion-bff" --> "carrinho-nodes": //returns// **OK (200)**
+        rnote right "carrinho-nodes"
         {
             "transactionCode": ""
             "status": {
@@ -79,7 +79,7 @@ activate "ps-acquisition-gateway"
         end note
     deactivate "store-conclusion-bff"
 
-    "ps-acquisition-gateway" --> "Tela de Conclusão"
+    "carrinho-nodes" --> "Tela de Conclusão"
 
-deactivate "ps-acquisition-gateway"
+deactivate "carrinho-nodes"
 @enduml
