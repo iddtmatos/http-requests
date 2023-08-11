@@ -1,0 +1,45 @@
+@startuml
+autonumber
+actor Customer
+
+Customer -> "Tela de Conclusão"
+activate "Tela de Conclusão"
+    "Tela de Conclusão" -> "ps-acquisition-gateway": Obter status\nda compra pix
+    activate "ps-acquisition-gateway"
+            "ps-acquisition-gateway" -> "store-conclusion-bff": **GET** /v1/purchases/{orderId}/status
+            rnote left "store-conclusion-bff"
+            **headers**
+            //x-ibanking-session-owner-customer-id: // asdfasdf
+            //x-cod-checkout:// qwerqwer
+            end note
+            activate "store-conclusion-bff"
+                "store-conclusion-bff" -> "store-checkout-api": **GET** /v2/checkout/consolidated/{codCheckout}
+                activate "store-checkout-api"
+                    "store-conclusion-bff" <-- "store-checkout-api": **returns200 **
+                    rnote right "store-conclusion-bff"
+                    **response body**
+                    {
+                        "transactionCode": "",
+                        "codCheckout": "",
+                        "orderId", ""
+                        "paymentStatus": ""
+                        ...
+                    }
+                    end note
+                deactivate "store-checkout-api"
+            deactivate "store-conclusion-bff"
+            group if [paymentStatus == "PAID"]
+                "ps-acquisition-gateway" <-- "store-conclusion-bff": **returns 200**
+                rnote right "ps-acquisition-gateway"
+                { "status": "PAID" }
+                end note
+            else
+                "ps-acquisition-gateway" <-- "store-conclusion-bff": **returns 404**
+                rnote right "ps-acquisition-gateway"
+                { "status": "PAYMENT_NOT_FOUND" }
+                end note
+            end
+    deactivate "ps-acquisition-gateway"
+    "Tela de Conclusão" <-- "ps-acquisition-gateway"
+deactivate "Tela de Conclusão"
+@enduml
