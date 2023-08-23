@@ -1,0 +1,2 @@
+###
+GET https://customer-service-api.qa.intranet.pagseguro.uol/customers?email=1620412856383_120@mock.com
