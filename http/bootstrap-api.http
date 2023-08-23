@@ -1,0 +1,34 @@
+### Login (Geração de token)
+POST https://bootstrap.intranet.pags/api/login/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "mail": "idd_tmatos@uolinc.com",
+    "password": "xxxx"
+}
+
+### Criação de repositórios
+POST https://bootstrap.intranet.pags/api/repositories/
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 93e28fa924cabbc9b76a9f70fd50e3
+
+{
+    "topdomain": "store",
+    "domain": "",
+    "subdomain": "",
+    "repoName": "store-conclusion-bff-integration-tests",
+    "adminteam": "Estocolmo",
+    "description": "Testes de Integração Backend da store-conclusion-bff",
+    "deployProd": true,
+    "legacy": false,
+    "pci": false,
+    "sox": false,
+    "simpleName": false
+}
+
+### Status do Repositório
+GET https://bootstrap.intranet.pags/api/repositories/status/011c7d02849648b6b6028ac7a51322b4
+Accept: application/json
+Authorization: Bearer 3442d515fbc71ef45033531f185982
